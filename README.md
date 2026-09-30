@@ -1,47 +1,60 @@
-# Mwesh backend
+# Mwesh Backend
 
-The piece that makes "Write with me" actually use your voice instead of the
-site's built-in fallback.
+> **FastAPI backend for the Mwesh “Write with me” poetry experience.**
 
-## Files
-- `voice_prompt.py` — edit this one. Put your real poems in `POEM_SAMPLES`.
-- `main.py` — the FastAPI app. Shouldn't need edits unless you change providers.
-- `requirements.txt` — Python dependencies.
+This service provides the server-side continuation layer that lets the poetry site generate continuations using the author's supplied writing samples.
 
-## Run it locally
+## Architecture
+
+```text
+Mwesh website
+     │
+     ▼
+FastAPI /continue
+     │
+     ▼
+Voice / poem samples
+     │
+     ▼
+LLM provider
+     │
+     ▼
+Generated continuation
 ```
+
+The static site retains a fallback path when the backend is unavailable.
+
+## Key files
+
+- `voice_prompt.py` — poetry samples and voice-conditioning prompt
+- `main.py` — FastAPI application
+- `requirements.txt` — Python dependencies
+
+## Local development
+
+```bash
 cd backend
 pip install -r requirements.txt
-export ANTHROPIC_API_KEY=sk-...
+export ANTHROPIC_API_KEY=...
 uvicorn main:app --reload --port 8000
 ```
-Test it:
-```
-curl -X POST http://localhost:8000/continue \
-  -H "Content-Type: application/json" \
-  -d '{"history": ["The river keeps the names we forget to say out loud"]}'
-```
 
-## Wire it to the site
-In `script.js`, set:
-```js
-const CONTINUE_API_URL = "http://localhost:8000/continue"; // or your deployed URL
-```
+The frontend can point its continuation endpoint at the local server or a deployed backend.
 
-## Deploying this without it spinning down
-This is the one part of the project that genuinely needs a live server (an
-LLM call can't run in a static site). Free tiers that sleep (Render, Railway
-free) will cause the first request after a while to be slow — annoying but
-not broken, since script.js's fallback covers total failures, not slow ones.
-Options if that matters to you:
-- Accept the cold start on a free tier — cheapest, simplest.
-- A small always-on VPS (~$4-6/mo — Hetzner, DigitalOcean droplet).
-- Cloudflare Workers / Vercel Edge Functions calling the Anthropic API
-  directly, skipping FastAPI entirely — no spin-down, pay-per-request, no
-  idle server to keep alive.
+## Production considerations
 
-## Before this is public
-- Replace `allow_origins=["*"]` in `main.py` with your real domain.
-- Put `ANTHROPIC_API_KEY` in your host's secret/env config, never in code.
-- Consider basic rate limiting (e.g. `slowapi`) so one visitor can't run up
-  your API bill.
+Before exposing the service publicly:
+
+- restrict CORS to the actual frontend domain
+- keep API credentials in environment/secret configuration
+- add rate limiting
+- monitor provider usage
+- avoid committing credentials or private configuration
+
+## Relationship to Mwesh
+
+This repository is the backend companion to the static Mwesh poetry experience. The browser project can remain functional without it because the frontend has a fallback path.
+
+## Status
+
+🚧 **Active development**
