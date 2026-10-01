@@ -1,6 +1,12 @@
-# Mwesh Backend
+# Mwesh Backend — The Heart 2
 
-> **FastAPI backend for the Mwesh “Write with me” poetry experience.**
+<p align="center">
+  <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" />
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/Status-Active_Development-ff5e6c?style=for-the-badge" />
+</p>
+
+> **FastAPI backend for the Mwesh "Write with me" poetry experience — voice-conditioned continuation powered by an LLM provider.**
 
 This service provides the server-side continuation layer that lets the poetry site generate continuations using the author's supplied writing samples.
 
@@ -57,4 +63,4 @@ This repository is the backend companion to the static Mwesh poetry experience. 
 
 ## Status
 
-🚧 **Active development**
+**Active development**
